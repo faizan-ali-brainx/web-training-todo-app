@@ -1,75 +1,57 @@
-# React + TypeScript + Vite
+# react-sample-app
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A Task Manager frontend built as part of a company web development training plan (React, TypeScript, Redux Toolkit, NestJS). This repo currently covers the **Frontend Practice Task**: authentication (Login, Signup, Email Verification, Forgot/Reset Password) and a Todo module with full CRUD, scoped to the logged-in user.
 
-Currently, two official plugins are available:
+See [docs/FRONTEND_PRACTICE_PLAN.md](docs/FRONTEND_PRACTICE_PLAN.md) for the full development plan, architecture decisions, and progress checklist.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Tech Stack
 
-## React Compiler
+- React 19 + TypeScript + Vite
+- React Router DOM — routing, protected routes
+- Redux Toolkit + React Redux — global state, typed slices/thunks
+- React Hook Form + Zod — form state and validation
+- Axios — typed API layer
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Prerequisites
 
-## Expanding the ESLint configuration
+- Node.js **20.19+** or **22.12+** (required by Vite 8 — check with `node -v`; if you're on an older version, use [nvm](https://github.com/nvm-sh/nvm) to install/switch: `nvm install --lts && nvm use --lts`)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Local Setup
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Open the printed `http://localhost:5173` URL in your browser. Vite's HMR will reflect code changes automatically.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Mock API
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+There's no backend yet (it arrives on Day 5 of the training plan, built with NestJS). Until then, this app runs against an **in-memory mock API** (`src/api/mock/`) backed by `localStorage`, so data survives page reloads. Notes:
 
+- No real emails are sent — signup and forgot-password flows show the verification/reset link directly on screen instead.
+- Every feature's API file (`src/features/auth/authApi.ts`, `src/features/todos/todosApi.ts`) is the single swap point for later: once the real API is ready, only those two files change — components, slices, and thunks don't.
+- To reset all mock data (users, todos, sessions), clear the browser's `localStorage` for this site.
+
+## Scripts
+
+| Command | Description |
+|---|---|
+| `npm run dev` | Start the Vite dev server |
+| `npm run build` | Type-check (`tsc -b`) and build for production |
+| `npm run lint` | Run ESLint |
+| `npm run preview` | Preview the production build locally |
+
+## Project Structure
+
+```
+src/
+├── app/            # Redux store + typed hooks
+├── api/            # Shared axios client, config, mock backend
+├── features/
+│   ├── auth/       # Login, Signup, Verify Email, Forgot/Reset Password
+│   └── todos/      # Todo list, form, item, CRUD state
+├── routes/         # AppRouter, ProtectedRoute, PublicOnlyRoute
+├── components/     # Shared UI (Button, TextField, FormError, Spinner)
+└── types/          # Shared cross-feature types (User, Todo, AuthSession)
 ```
