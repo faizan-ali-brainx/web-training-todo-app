@@ -13,10 +13,10 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
     const inputId = id ?? rest.name;
 
     return (
-      <div className="ui-field">
+      <div className="ui_field">
         <label htmlFor={inputId}>{label}</label>
-        <input ref={ref} id={inputId} className="ui-input" {...rest} />
-        {error && <span className="ui-field-error">{error}</span>}
+        <input ref={ref} id={inputId} className="ui_input" {...rest} />
+        {error && <span className="ui_field_error">{error}</span>}
       </div>
     );
   }

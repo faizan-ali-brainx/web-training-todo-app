@@ -4,6 +4,8 @@ A Task Manager frontend built as part of a company web development training plan
 
 See [docs/FRONTEND_PRACTICE_PLAN.md](docs/FRONTEND_PRACTICE_PLAN.md) for the full development plan, architecture decisions, and progress checklist.
 
+Before writing code or opening a PR, check [docs/PR_STANDARDS.md](docs/PR_STANDARDS.md) — a condensed, one-file reference for this repo's code standards and PR review checklist.
+
 ## Tech Stack
 
 - React 19 + TypeScript + Vite
@@ -20,6 +22,7 @@ See [docs/FRONTEND_PRACTICE_PLAN.md](docs/FRONTEND_PRACTICE_PLAN.md) for the ful
 
 ```bash
 npm install
+cp .env.example .env
 npm run dev
 ```
 
@@ -51,7 +54,7 @@ src/
 ├── features/
 │   ├── auth/       # Login, Signup, Verify Email, Forgot/Reset Password
 │   └── todos/      # Todo list, form, item, CRUD state
-├── routes/         # AppRouter, ProtectedRoute, PublicOnlyRoute
+├── routes/         # AppRouter, ProtectedRoute, PublicOnlyRoute, NotFoundPage
 ├── components/     # Shared UI (Button, TextField, FormError, Spinner)
 └── types/          # Shared cross-feature types (User, Todo, AuthSession)
 ```

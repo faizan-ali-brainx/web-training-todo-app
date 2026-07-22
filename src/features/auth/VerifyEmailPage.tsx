@@ -10,20 +10,37 @@ type VerifyStatus = 'verifying' | 'success' | 'error';
 
 const MISSING_TOKEN_MESSAGE = 'Missing verification token.';
 
-export function VerifyEmailPage() {
-  const dispatch = useAppDispatch();
-  const [searchParams] = useSearchParams();
-  const token = searchParams.get('token');
+function VerifyEmailResult({ status, error }: { status: VerifyStatus; error: string | null }) {
+  if (status === 'verifying') return <Spinner />;
 
-  // Derive the missing-token case directly from render instead of setting
-  // state inside the effect for it — the effect only needs to run the actual
-  // async verification when a token is present.
+  if (status === 'success') {
+    return (
+      <>
+        <p className="auth_success">Your email has been verified.</p>
+        <div className="auth_links">
+          <Link to="/login">Continue to login</Link>
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <FormError message={error} />
+      <div className="auth_links">
+        <Link to="/signup">Back to sign up</Link>
+      </div>
+    </>
+  );
+}
+
+// verifyEmail consumes a one-time token server-side, so it isn't safe to call
+// twice — guarded with a ref against StrictMode's dev-only double effect-invocation,
+// the same way React's docs recommend for non-idempotent side effects.
+function useVerifyOnMount(token: string | null) {
+  const dispatch = useAppDispatch();
   const [status, setStatus] = useState<VerifyStatus>(token ? 'verifying' : 'error');
   const [error, setError] = useState<string | null>(token ? null : MISSING_TOKEN_MESSAGE);
-
-  // verifyEmail consumes a one-time token server-side, so it isn't safe to
-  // call twice — guard against StrictMode's dev-only double effect-invocation
-  // the same way React's docs recommend for non-idempotent side effects.
   const hasRun = useRef(false);
 
   useEffect(() => {
@@ -39,26 +56,17 @@ export function VerifyEmailPage() {
       });
   }, [dispatch, token]);
 
+  return { status, error };
+}
+
+export function VerifyEmailPage() {
+  const [searchParams] = useSearchParams();
+  const { status, error } = useVerifyOnMount(searchParams.get('token'));
+
   return (
-    <section className="auth-page">
+    <section className="auth_page">
       <h1>Email Verification</h1>
-      {status === 'verifying' && <Spinner />}
-      {status === 'success' && (
-        <>
-          <p className="auth-success">Your email has been verified.</p>
-          <div className="auth-links">
-            <Link to="/login">Continue to login</Link>
-          </div>
-        </>
-      )}
-      {status === 'error' && (
-        <>
-          <FormError message={error} />
-          <div className="auth-links">
-            <Link to="/signup">Back to sign up</Link>
-          </div>
-        </>
-      )}
+      <VerifyEmailResult status={status} error={error} />
     </section>
   );
 }

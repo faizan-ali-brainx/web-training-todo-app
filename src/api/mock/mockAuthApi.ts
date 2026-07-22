@@ -12,6 +12,7 @@ export interface LoginDto {
   password: string;
 }
 
+// Strips the password before a user record ever leaves the mock "database".
 function toPublicUser(user: StoredUser): User {
   return { id: user.id, name: user.name, email: user.email, emailVerified: user.emailVerified };
 }
@@ -27,6 +28,8 @@ export function getUserIdFromToken(token: string): number {
   return userId;
 }
 
+// Mock implementation of the auth endpoints (signup/login/verify/reset/logout).
+// Mirrors the shape and status codes the real NestJS auth API will use.
 export const mockAuthApi = {
   async signup(dto: SignupDto): Promise<{ verificationToken: string }> {
     await delay();

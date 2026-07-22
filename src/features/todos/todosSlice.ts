@@ -45,6 +45,33 @@ export const deleteTodo = createAsyncThunk<number, number, { state: RootState }>
   }
 );
 
+function handleFetchPending(state: TodosState) {
+  state.status = 'loading';
+  state.error = null;
+}
+
+function handleFetchFulfilled(state: TodosState, action: PayloadAction<Todo[]>) {
+  state.status = 'succeeded';
+  state.items = action.payload;
+}
+
+function handleFetchRejected(state: TodosState, action: { error: { message?: string } }) {
+  state.status = 'failed';
+  state.error = action.error.message ?? 'Failed to load todos';
+}
+
+function handleAddFulfilled(state: TodosState, action: PayloadAction<Todo>) {
+  state.items.push(action.payload);
+}
+
+function handleUpdateFulfilled(state: TodosState, action: PayloadAction<Todo>) {
+  state.items = state.items.map((t) => (t.id === action.payload.id ? action.payload : t));
+}
+
+function handleDeleteFulfilled(state: TodosState, action: PayloadAction<number>) {
+  state.items = state.items.filter((t) => t.id !== action.payload);
+}
+
 const todosSlice = createSlice({
   name: 'todos',
   initialState,
@@ -57,30 +84,12 @@ const todosSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchTodos.pending, (state) => {
-        state.status = 'loading';
-        state.error = null;
-      })
-      .addCase(fetchTodos.fulfilled, (state, action: PayloadAction<Todo[]>) => {
-        state.status = 'succeeded';
-        state.items = action.payload;
-      })
-      .addCase(fetchTodos.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message ?? 'Failed to load todos';
-      })
-
-      .addCase(addTodo.fulfilled, (state, action: PayloadAction<Todo>) => {
-        state.items.push(action.payload);
-      })
-
-      .addCase(updateTodo.fulfilled, (state, action: PayloadAction<Todo>) => {
-        state.items = state.items.map((t) => (t.id === action.payload.id ? action.payload : t));
-      })
-
-      .addCase(deleteTodo.fulfilled, (state, action: PayloadAction<number>) => {
-        state.items = state.items.filter((t) => t.id !== action.payload);
-      });
+      .addCase(fetchTodos.pending, handleFetchPending)
+      .addCase(fetchTodos.fulfilled, handleFetchFulfilled)
+      .addCase(fetchTodos.rejected, handleFetchRejected)
+      .addCase(addTodo.fulfilled, handleAddFulfilled)
+      .addCase(updateTodo.fulfilled, handleUpdateFulfilled)
+      .addCase(deleteTodo.fulfilled, handleDeleteFulfilled);
   },
 });
 

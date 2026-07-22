@@ -71,51 +71,58 @@ export const rehydrateSession = createAsyncThunk(
   }
 );
 
+function handleLoginPending(state: AuthState) {
+  state.status = 'loading';
+  state.error = null;
+}
+
+function handleLoginFulfilled(state: AuthState, action: { payload: AuthSession }) {
+  state.status = 'succeeded';
+  state.user = action.payload.user;
+  state.accessToken = action.payload.accessToken;
+}
+
+function handleLoginRejected(state: AuthState, action: { error: { message?: string } }) {
+  state.status = 'failed';
+  state.error = action.error.message ?? 'Login failed';
+}
+
+function handleLogoutFulfilled(state: AuthState) {
+  state.user = null;
+  state.accessToken = null;
+  state.status = 'idle';
+  state.error = null;
+}
+
+function handleRehydratePending(state: AuthState) {
+  state.status = 'loading';
+}
+
+function handleRehydrateFulfilled(state: AuthState, action: { payload: AuthSession | null }) {
+  state.status = 'succeeded';
+  state.user = action.payload?.user ?? null;
+  state.accessToken = action.payload?.accessToken ?? null;
+}
+
+function handleRehydrateRejected(state: AuthState) {
+  state.status = 'idle';
+  state.user = null;
+  state.accessToken = null;
+}
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(login.pending, (state) => {
-        state.status = 'loading';
-        state.error = null;
-      })
-      .addCase(login.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.user = action.payload.user;
-        state.accessToken = action.payload.accessToken;
-      })
-      .addCase(login.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message ?? 'Login failed';
-      })
-
-      .addCase(logout.fulfilled, (state) => {
-        state.user = null;
-        state.accessToken = null;
-        state.status = 'idle';
-        state.error = null;
-      })
-
-      .addCase(rehydrateSession.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(rehydrateSession.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        if (action.payload) {
-          state.user = action.payload.user;
-          state.accessToken = action.payload.accessToken;
-        } else {
-          state.user = null;
-          state.accessToken = null;
-        }
-      })
-      .addCase(rehydrateSession.rejected, (state) => {
-        state.status = 'idle';
-        state.user = null;
-        state.accessToken = null;
-      });
+      .addCase(login.pending, handleLoginPending)
+      .addCase(login.fulfilled, handleLoginFulfilled)
+      .addCase(login.rejected, handleLoginRejected)
+      .addCase(logout.fulfilled, handleLogoutFulfilled)
+      .addCase(rehydrateSession.pending, handleRehydratePending)
+      .addCase(rehydrateSession.fulfilled, handleRehydrateFulfilled)
+      .addCase(rehydrateSession.rejected, handleRehydrateRejected);
   },
 });
 

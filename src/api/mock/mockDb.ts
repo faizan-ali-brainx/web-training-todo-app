@@ -46,6 +46,8 @@ function save(db: MockDbShape): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
 }
 
+// localStorage-backed fake database — read/write always go through here so
+// every mock endpoint sees the same persisted state across page reloads.
 export const db = {
   read(): MockDbShape {
     return load();
@@ -60,14 +62,18 @@ export const db = {
 
 export type { StoredUser, MockDbShape };
 
+// Simulates real network latency so loading states are actually visible.
 export function delay(ms = 500): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+// Stand-in for a real signed token/id, since the mock never talks to a real auth server.
 export function generateToken(): string {
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
 }
 
+// Thrown by mock endpoints to carry an HTTP-style status code, mirroring how
+// the real NestJS API's exceptions will map to response codes.
 export class MockApiError extends Error {
   status: number;
 

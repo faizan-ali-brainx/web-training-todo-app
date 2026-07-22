@@ -20,12 +20,12 @@ export function TodoForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="todo-add-form">
-      <input {...register('title')} placeholder="New todo title" className="ui-input" />
+    <form onSubmit={handleSubmit(onSubmit)} className="todo_add_form">
+      <input {...register('title')} placeholder="New todo title" className="ui_input" />
       <Button type="submit" disabled={isSubmitting}>
         Add
       </Button>
-      {errors.title && <span className="ui-field-error">{errors.title.message}</span>}
+      {errors.title && <span className="ui_field_error">{errors.title.message}</span>}
     </form>
   );
 }

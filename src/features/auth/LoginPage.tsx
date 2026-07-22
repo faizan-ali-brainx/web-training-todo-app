@@ -1,7 +1,6 @@
-import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
+import type { FieldErrors, UseFormRegister } from 'react-hook-form';
 import './auth.css';
 import { Button } from '../../components/Button';
 import { FormError } from '../../components/FormError';
@@ -9,50 +8,56 @@ import { TextField } from '../../components/TextField';
 import { useAppDispatch } from '../../app/hooks';
 import { login } from './authSlice';
 import { loginSchema, type LoginFormValues } from './schemas';
+import { useAuthForm } from './useAuthForm';
+
+interface LoginFormFieldsProps {
+  register: UseFormRegister<LoginFormValues>;
+  errors: FieldErrors<LoginFormValues>;
+  isSubmitting: boolean;
+  onSubmit: () => void;
+}
+
+function LoginFormFields({ register, errors, isSubmitting, onSubmit }: LoginFormFieldsProps) {
+  return (
+    <form onSubmit={onSubmit}>
+      <TextField label="Email" type="email" {...register('email')} error={errors.email?.message} />
+      <TextField label="Password" type="password" {...register('password')} error={errors.password?.message} />
+      <Button type="submit" disabled={isSubmitting}>
+        {isSubmitting ? 'Logging in...' : 'Login'}
+      </Button>
+    </form>
+  );
+}
+
+function LoginLinks() {
+  return (
+    <div className="auth_links">
+      <Link to="/forgot-password">Forgot your password?</Link>
+      <span>Don't have an account? <Link to="/signup">Sign up</Link></span>
+    </div>
+  );
+}
 
 export function LoginPage() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const [formError, setFormError] = useState<string | null>(null);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<LoginFormValues>({ resolver: zodResolver(loginSchema) });
-
-  const onSubmit = async (data: LoginFormValues) => {
-    setFormError(null);
-    try {
-      await dispatch(login(data)).unwrap();
-      navigate('/todos');
-    } catch (err) {
-      setFormError((err as Error).message);
-    }
+  const submitLogin = async (data: LoginFormValues) => {
+    await dispatch(login(data)).unwrap();
+    navigate('/todos');
   };
+  const { register, onSubmit, formError, formState } = useAuthForm(zodResolver(loginSchema), submitLogin);
 
   return (
-    <section className="auth-page">
+    <section className="auth_page">
       <h1>Login</h1>
       <FormError message={formError} />
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <TextField label="Email" type="email" {...register('email')} error={errors.email?.message} />
-        <TextField
-          label="Password"
-          type="password"
-          {...register('password')}
-          error={errors.password?.message}
-        />
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Logging in...' : 'Login'}
-        </Button>
-      </form>
-      <div className="auth-links">
-        <Link to="/forgot-password">Forgot your password?</Link>
-        <span>
-          Don't have an account? <Link to="/signup">Sign up</Link>
-        </span>
-      </div>
+      <LoginFormFields
+        register={register}
+        errors={formState.errors}
+        isSubmitting={formState.isSubmitting}
+        onSubmit={onSubmit}
+      />
+      <LoginLinks />
     </section>
   );
 }

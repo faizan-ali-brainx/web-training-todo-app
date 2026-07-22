@@ -11,6 +11,9 @@ export interface UpdateTodoDto {
   completed?: boolean;
 }
 
+// Looks up a todo and enforces that the requesting user owns it — 404 if it
+// doesn't exist, 403 if it belongs to someone else. Only authenticated users
+// managing their own todos should ever reach the write operations below.
 function findOwnedTodo(userId: number, id: number): Todo {
   const state = db.read();
   const todo = state.todos.find((t) => t.id === id);
@@ -19,6 +22,7 @@ function findOwnedTodo(userId: number, id: number): Todo {
   return todo;
 }
 
+// Mock implementation of the todos CRUD endpoints, scoped per-user via the access token.
 export const mockTodosApi = {
   async getAll(token: string): Promise<Todo[]> {
     await delay();

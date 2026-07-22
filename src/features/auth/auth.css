@@ -1,4 +1,4 @@
-.auth-page {
+.auth_page {
   max-width: 400px;
   margin: 4rem auto;
   padding: 2rem;
@@ -9,17 +9,17 @@
   text-align: left;
 }
 
-.auth-page h1 {
+.auth_page h1 {
   font-size: 1.5rem;
   margin: 0 0 1.25rem;
 }
 
-.auth-page form {
+.auth_page form {
   display: flex;
   flex-direction: column;
 }
 
-.auth-links {
+.auth_links {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
@@ -27,15 +27,15 @@
   font-size: 0.9rem;
 }
 
-.auth-links a {
+.auth_links a {
   color: var(--accent);
 }
 
-.auth-success {
+.auth_success {
   color: var(--success);
 }
 
-.auth-mock-note {
+.auth_mock_note {
   margin-top: 1rem;
   padding: 0.75rem;
   background: var(--accent-bg);

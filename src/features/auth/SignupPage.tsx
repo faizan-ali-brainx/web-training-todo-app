@@ -1,79 +1,81 @@
-import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import type { FieldErrors, UseFormRegister } from 'react-hook-form';
 import './auth.css';
 import { Button } from '../../components/Button';
 import { FormError } from '../../components/FormError';
 import { TextField } from '../../components/TextField';
 import { useAppDispatch } from '../../app/hooks';
+import { AuthCheckEmailNotice } from './AuthCheckEmailNotice';
 import { signup } from './authSlice';
 import { signupSchema, type SignupFormValues } from './schemas';
+import { useAuthForm } from './useAuthForm';
+
+interface SignupFormFieldsProps {
+  register: UseFormRegister<SignupFormValues>;
+  errors: FieldErrors<SignupFormValues>;
+  isSubmitting: boolean;
+  onSubmit: () => void;
+}
+
+function SignupFormFields({ register, errors, isSubmitting, onSubmit }: SignupFormFieldsProps) {
+  return (
+    <form onSubmit={onSubmit}>
+      <TextField label="Name" {...register('name')} error={errors.name?.message} />
+      <TextField label="Email" type="email" {...register('email')} error={errors.email?.message} />
+      <TextField label="Password" type="password" {...register('password')} error={errors.password?.message} />
+      <TextField
+        label="Confirm password"
+        type="password"
+        {...register('confirmPassword')}
+        error={errors.confirmPassword?.message}
+      />
+      <Button type="submit" disabled={isSubmitting}>
+        {isSubmitting ? 'Signing up...' : 'Sign up'}
+      </Button>
+    </form>
+  );
+}
+
+function useSignupSubmit() {
+  const dispatch = useAppDispatch();
+  const [verificationToken, setVerificationToken] = useState<string | null>(null);
+  const submitSignup = async (data: SignupFormValues) => {
+    const result = await dispatch(signup(data)).unwrap();
+    setVerificationToken(result.verificationToken);
+  };
+  return { verificationToken, submitSignup };
+}
+
+function SignupLinks() {
+  return (
+    <div className="auth_links">
+      <span>Already have an account? <Link to="/login">Login</Link></span>
+    </div>
+  );
+}
 
 export function SignupPage() {
-  const dispatch = useAppDispatch();
-  const [formError, setFormError] = useState<string | null>(null);
-  const [verificationToken, setVerificationToken] = useState<string | null>(null);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<SignupFormValues>({ resolver: zodResolver(signupSchema) });
-
-  const onSubmit = async (data: SignupFormValues) => {
-    setFormError(null);
-    try {
-      const result = await dispatch(signup(data)).unwrap();
-      setVerificationToken(result.verificationToken);
-    } catch (err) {
-      setFormError((err as Error).message);
-    }
-  };
+  const { verificationToken, submitSignup } = useSignupSubmit();
+  const { register, onSubmit, formError, formState } = useAuthForm(zodResolver(signupSchema), submitSignup);
 
   if (verificationToken) {
-    return (
-      <section className="auth-page">
-        <h1>Check your email</h1>
-        <p className="auth-success">Account created! Verify your email to log in.</p>
-        <p className="auth-mock-note">
-          No real email is sent yet (mock API). Click below to simulate opening the verification
-          link:
-          <br />
-          <Link to={`/verify-email?token=${verificationToken}`}>Verify my email</Link>
-        </p>
-      </section>
-    );
+    const linkTo = `/verify-email?token=${verificationToken}`;
+    return <AuthCheckEmailNotice successMessage="Account created! Verify your email to log in." linkTo={linkTo} linkLabel="Verify my email" />;
   }
 
   return (
-    <section className="auth-page">
+    <section className="auth_page">
       <h1>Sign up</h1>
       <FormError message={formError} />
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <TextField label="Name" {...register('name')} error={errors.name?.message} />
-        <TextField label="Email" type="email" {...register('email')} error={errors.email?.message} />
-        <TextField
-          label="Password"
-          type="password"
-          {...register('password')}
-          error={errors.password?.message}
-        />
-        <TextField
-          label="Confirm password"
-          type="password"
-          {...register('confirmPassword')}
-          error={errors.confirmPassword?.message}
-        />
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Signing up...' : 'Sign up'}
-        </Button>
-      </form>
-      <div className="auth-links">
-        <span>
-          Already have an account? <Link to="/login">Login</Link>
-        </span>
-      </div>
+      <SignupFormFields
+        register={register}
+        errors={formState.errors}
+        isSubmitting={formState.isSubmitting}
+        onSubmit={onSubmit}
+      />
+      <SignupLinks />
     </section>
   );
 }

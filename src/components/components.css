@@ -1,4 +1,4 @@
-.ui-button {
+.ui_button {
   font: inherit;
   font-weight: 600;
   padding: 0.55rem 1rem;
@@ -7,23 +7,23 @@
   cursor: pointer;
 }
 
-.ui-button:disabled {
+.ui_button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-.ui-button--primary {
+.ui_button_primary {
   background: var(--accent);
   color: #fff;
 }
 
-.ui-button--secondary {
+.ui_button_secondary {
   background: var(--surface);
   color: var(--text-h);
   border-color: var(--border);
 }
 
-.ui-field {
+.ui_field {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
@@ -31,13 +31,13 @@
   text-align: left;
 }
 
-.ui-field label {
+.ui_field label {
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--text-h);
 }
 
-.ui-input {
+.ui_input {
   font: inherit;
   padding: 0.5rem 0.65rem;
   border: 1px solid var(--border);
@@ -46,17 +46,17 @@
   color: var(--text-h);
 }
 
-.ui-input:focus {
+.ui_input:focus {
   outline: 2px solid var(--accent);
   outline-offset: 1px;
 }
 
-.ui-field-error {
+.ui_field_error {
   font-size: 0.8rem;
   color: var(--danger);
 }
 
-.ui-form-error {
+.ui_form_error {
   background: var(--danger-bg);
   color: var(--danger);
   border-radius: 6px;
@@ -65,7 +65,7 @@
   margin: 0 0 1rem;
 }
 
-.ui-spinner {
+.ui_spinner {
   width: 24px;
   height: 24px;
   border: 3px solid var(--border);

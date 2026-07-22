@@ -5,6 +5,7 @@ import { ResetPasswordPage } from '../features/auth/ResetPasswordPage';
 import { SignupPage } from '../features/auth/SignupPage';
 import { VerifyEmailPage } from '../features/auth/VerifyEmailPage';
 import { TodoListPage } from '../features/todos/TodoListPage';
+import { NotFoundPage } from './NotFoundPage';
 import { ProtectedRoute } from './ProtectedRoute';
 import { PublicOnlyRoute } from './PublicOnlyRoute';
 
@@ -28,7 +29,7 @@ export function AppRouter() {
         </Route>
 
         <Route path="/" element={<Navigate to="/todos" replace />} />
-        <Route path="*" element={<Navigate to="/todos" replace />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );
