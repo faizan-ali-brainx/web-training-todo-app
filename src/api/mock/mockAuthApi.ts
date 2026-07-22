@@ -31,7 +31,7 @@ export function getUserIdFromToken(token: string): number {
 // Mock implementation of the auth endpoints (signup/login/verify/reset/logout).
 // Mirrors the shape and status codes the real NestJS auth API will use.
 export const mockAuthApi = {
-  async signup(dto: SignupDto): Promise<{ verificationToken: string }> {
+  async signup(dto: SignupDto): Promise<{ message: string; verificationToken: string }> {
     await delay();
     const state = db.read();
 
@@ -52,7 +52,7 @@ export const mockAuthApi = {
       s.verificationTokens[verificationToken] = user.id;
     });
 
-    return { verificationToken };
+    return { message: 'Account created — check your email to verify.', verificationToken };
   },
 
   async verifyEmail(token: string): Promise<void> {
@@ -106,7 +106,7 @@ export const mockAuthApi = {
     return toPublicUser(user);
   },
 
-  async forgotPassword(email: string): Promise<{ resetToken: string }> {
+  async forgotPassword(email: string): Promise<{ message: string; resetToken: string }> {
     await delay();
     const state = db.read();
     const user = state.users.find((u) => u.email === email);
@@ -119,7 +119,7 @@ export const mockAuthApi = {
       s.resetTokens[resetToken] = user.id;
     });
 
-    return { resetToken };
+    return { message: 'A password reset link would be sent to your email.', resetToken };
   },
 
   async resetPassword(token: string, newPassword: string): Promise<void> {

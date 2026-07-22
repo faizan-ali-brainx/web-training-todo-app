@@ -1,8 +1,25 @@
-import axios from 'axios';
+import axios, { type AxiosError } from 'axios';
 import { ACCESS_TOKEN_STORAGE_KEY, API_BASE_URL } from './config';
 
-// Not used while USE_MOCK_API is true — wired up now so the Day 5 swap to the
-// real NestJS API only means pointing each feature's *Api.ts at these calls.
+// Thrown by the real API layer on any failed request — same role as the mock
+// API's MockApiError, so callers (thunks, pages) handle both identically via
+// `(err as Error).message`.
+export class ApiError extends Error {
+  status: number;
+
+  constructor(status: number, message: string) {
+    super(message);
+    this.status = status;
+  }
+}
+
+function extractMessage(data: unknown): string {
+  const message = (data as { message?: string | string[] } | undefined)?.message;
+  if (Array.isArray(message)) return message.join(', ');
+  if (typeof message === 'string') return message;
+  return 'Something went wrong';
+}
+
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
 });
@@ -17,10 +34,11 @@ apiClient.interceptors.request.use((config) => {
 
 apiClient.interceptors.response.use(
   (res) => res,
-  (error) => {
+  (error: AxiosError) => {
     if (error.response?.status === 401) {
       localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
     }
-    return Promise.reject(error);
+    const status = error.response?.status ?? 500;
+    return Promise.reject(new ApiError(status, extractMessage(error.response?.data)));
   }
 );

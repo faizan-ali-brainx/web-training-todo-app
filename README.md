@@ -28,13 +28,25 @@ npm run dev
 
 Open the printed `http://localhost:5173` URL in your browser. Vite's HMR will reflect code changes automatically.
 
-## Mock API
+## Backend Integration Status
 
-There's no backend yet (it arrives on Day 5 of the training plan, built with NestJS). Until then, this app runs against an **in-memory mock API** (`src/api/mock/`) backed by `localStorage`, so data survives page reloads. Notes:
+Each feature is switched between the mock API and the real backend independently via its own env
+flag — see `.env.example`:
 
-- No real emails are sent — signup and forgot-password flows show the verification/reset link directly on screen instead.
-- Every feature's API file (`src/features/auth/authApi.ts`, `src/features/todos/todosApi.ts`) is the single swap point for later: once the real API is ready, only those two files change — components, slices, and thunks don't.
-- To reset all mock data (users, todos, sessions), clear the browser's `localStorage` for this site.
+- **Auth** (`VITE_USE_MOCK_AUTH_API`) — **live against the real NestJS backend** (Part 1 complete:
+  signup, email verification, login/logout, session rehydration, forgot/reset password).
+- **Todos** (`VITE_USE_MOCK_TODOS_API`) — **live against the real NestJS backend** (Part 1 complete:
+  full CRUD, ownership-enforced).
+
+Both require the backend running locally at `VITE_API_BASE_URL` (see `backend/README.md`).
+
+Notes:
+- Set either flag to `true` to fall back to that feature's mock implementation (no backend needed).
+- The mock auth flow shows verification/reset links directly on screen (no real email sender); the
+  real backend does the same outside production mode, in addition to actually sending an email.
+- Every feature's API file (`src/features/auth/authApi.ts`, `src/features/todos/todosApi.ts`) is
+  the single swap point per feature — components, slices, and thunks never know which is active.
+- To reset the todos mock data, clear the browser's `localStorage` for this site.
 
 ## Scripts
 

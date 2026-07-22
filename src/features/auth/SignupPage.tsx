@@ -40,12 +40,17 @@ function SignupFormFields({ register, errors, isSubmitting, onSubmit }: SignupFo
 
 function useSignupSubmit() {
   const dispatch = useAppDispatch();
-  const [verificationToken, setVerificationToken] = useState<string | null>(null);
+  const [signupDone, setSignupDone] = useState(false);
+  const [verificationToken, setVerificationToken] = useState<string | undefined>(undefined);
   const submitSignup = async (data: SignupFormValues) => {
-    const result = await dispatch(signup(data)).unwrap();
+    // confirmPassword only exists for client-side validation — never send it
+    // to the API (the real backend's DTO rejects unlisted properties).
+    const { name, email, password } = data;
+    const result = await dispatch(signup({ name, email, password })).unwrap();
     setVerificationToken(result.verificationToken);
+    setSignupDone(true);
   };
-  return { verificationToken, submitSignup };
+  return { signupDone, verificationToken, submitSignup };
 }
 
 function SignupLinks() {
@@ -57,11 +62,11 @@ function SignupLinks() {
 }
 
 export function SignupPage() {
-  const { verificationToken, submitSignup } = useSignupSubmit();
+  const { signupDone, verificationToken, submitSignup } = useSignupSubmit();
   const { register, onSubmit, formError, formState } = useAuthForm(zodResolver(signupSchema), submitSignup);
 
-  if (verificationToken) {
-    const linkTo = `/verify-email?token=${verificationToken}`;
+  if (signupDone) {
+    const linkTo = verificationToken ? `/verify-email?token=${verificationToken}` : undefined;
     return <AuthCheckEmailNotice successMessage="Account created! Verify your email to log in." linkTo={linkTo} linkLabel="Verify my email" />;
   }
 
