@@ -1,0 +1,96 @@
+# Important: This file contains all available configuration options.
+# Do not copy this entire file to your repository configuration.
+# Your repository configuration should only include options you wish to override from the defaults.
+#
+# Use this page: 'https://qodo-merge-docs.qodo.ai/ai_search/' to ask questions about the configuration options.
+
+[config]
+use_global_settings_file=false
+add_repo_metadata_file_list=["API_REFERENCE.md", "DOCUMENTATION.md", "README.md"]
+model = "gpt-4.1-mini"
+
+[pr_reviewer] # /review #
+extra_instructions = ""
+
+[pr_description] # /describe #
+generate_ai_title=true
+final_update_message = true
+enable_pr_diagram=false # adds a section with a diagram of the PR changes
+inline_file_summary='table' # false, true, 'table'
+
+[pr_custom_prompt] # /custom_prompt #
+prompt = """\
+The code review should focus on the following React.js code standards:
+
+1. Proper Title and Description (5%):
+   - PR title must be self-explanatory and describe what the pull request does
+   - Description should be detailed with what was changed, why and how it was changed
+
+2. Single Responsibility (5%):
+   - PR should target a single feature only
+   - Multiple features in a single PR increase complexity and reduce code quality
+
+3. Readme File (4%):
+   - README file should be updated with the new feature documentation
+
+4. Environment Variables (5%):
+   - Every configuration value should be in environment or config files
+   - No code changes should be required when configuration changes
+
+5. MVC Pattern (4%):
+   - Follow proper Model, View, and Controller structure in React components
+   - Separate presentation logic from business logic
+
+6. Shy Code (5%):
+   - Code should be loosely coupled with other code
+   - Maximum 23 lines are allowed in a function
+
+7. SOLID Principle (5%):
+   - Each function or class should handle only one feature
+   - If there is any new feature, move it to a new function or class
+
+8. DRY Principle (5%):
+   - Don't repeat yourself
+   - Write code efficiently so that you can reuse your own logic
+
+9. Naming Conventions (5%):
+   - Variable names should follow MERN stack standards
+   - Names should be self-explanatory
+
+10. Comments (4%):
+    - Use TODO comments for remaining tasks in a feature
+    - Write comments before each function to describe its functionality
+
+11. Unnecessary Code and Imports (4%):
+    - Remove unused code and commented code before PR
+    - Remove any test console logs
+
+12. Proper Response Code with Error Message (4%):
+    - Proper responses and error handling in API calls
+    - Exception handling and cleanup (dispose) resources
+    - Complete error messages for user feedback
+
+13. Styling (5%):
+    - Class names should be in snake_case (e.g., section-wrapper)
+    - Two classes cannot share the same style
+    - Use CSS variables for standard colors and font styles
+    - Inline styling is prohibited except for dynamic styling
+
+14. Reusability (5%):
+    - If same code in a component repeats more than once, make it a separate component
+    - Use utility functions for similar tasks
+    - Use HOC (Higher Order Components) for reusability of tasks
+
+15. Naming Convention - React Components (5%):
+    - Use PascalCase for React components and their filenames
+    - Use camelCase for component instances
+
+16. Routing (5%):
+    - Handle 404 Error properly
+    - Authenticated routes cannot be accessible without authentication
+    - Use HOC to protect secret routes
+    - Use standard naming convention for routing
+
+17. State Management (5%):
+    - Integrate redux-toolkit for state management tool
+"""

@@ -1,0 +1,119 @@
+pr_compliances:
+    - title: 'Proper Title and Description'
+      compliance_label: true
+      weight: 5.00
+      objective: 'PR title must be self-explanatory describing what the pull request does. Description should be detailed with what was changed, why and how it was changed'
+      success_criteria: 'PR has a clear, self-explanatory title and comprehensive description explaining what, why, and how changes were made'
+      failure_criteria: 'Missing or unclear PR title/description, or description lacks details about what, why, and how changes were made'
+
+    - title: 'Single Responsibility'
+      compliance_label: true
+      weight: 5.00
+      objective: 'PR should target a single feature only. Multiple features in a single PR increase complexity and reduce code quality'
+      success_criteria: 'PR contains changes for a single, cohesive feature'
+      failure_criteria: 'PR contains multiple unrelated features or concerns that should be separated'
+
+    - title: 'Readme File Updated'
+      compliance_label: true
+      weight: 4.00
+      objective: 'README file should be updated with the new feature documentation'
+      success_criteria: 'README file has been updated to document the new feature or changes'
+      failure_criteria: 'New features added without corresponding README documentation updates'
+
+    - title: 'Environment Variables Configuration'
+      compliance_label: true
+      weight: 5.00
+      objective: 'Every configuration value should be in environment or config files. No code changes should be required when configuration changes'
+      success_criteria: 'All configuration values are externalized to environment variables or config files'
+      failure_criteria: 'Hardcoded configuration values present in code that should be in environment/config files'
+
+    - title: 'MVC Pattern Compliance'
+      compliance_label: true
+      weight: 4.00
+      objective: 'Follow proper Model, View, and Controller structure in React components. Separate presentation logic from business logic'
+      success_criteria: 'Code follows MVC pattern with proper separation of concerns between Model, View, and Controller in React context'
+      failure_criteria: 'Improper separation of concerns, business logic mixed with presentation logic, or missing MVC structure'
+
+    - title: 'Shy Code - Function Length'
+      compliance_label: true
+      weight: 5.00
+      objective: 'Code should be loosely coupled. Maximum 23 lines are allowed in a function'
+      success_criteria: 'All functions are 23 lines or less and demonstrate loose coupling'
+      failure_criteria: 'Functions exceed 23 lines or show tight coupling with other code'
+
+    - title: 'SOLID Principle'
+      compliance_label: true
+      weight: 5.00
+      objective: 'Each function or class should handle only one feature. If there is any new feature, move it to a new function or class'
+      success_criteria: 'Functions and classes follow single responsibility principle with one clear purpose'
+      failure_criteria: 'Functions or classes handle multiple features or concerns that should be separated'
+
+    - title: 'DRY Principle'
+      compliance_label: true
+      weight: 5.00
+      objective: "Don't repeat yourself. Write code efficiently so that you can reuse your own logic"
+      success_criteria: 'No code duplication; reusable logic is properly extracted and reused'
+      failure_criteria: 'Repeated code blocks that should be extracted into reusable functions or utilities'
+
+    - title: 'Naming Conventions - MERN Stack'
+      compliance_label: true
+      weight: 5.00
+      objective: 'Variable names should follow MERN stack standards. Names should be self-explanatory'
+      success_criteria: 'All variables, functions, and classes follow MERN stack naming conventions and are self-explanatory'
+      failure_criteria: 'Inconsistent or non-standard naming that deviates from MERN stack conventions or unclear naming'
+
+    - title: 'Comments and Documentation'
+      compliance_label: true
+      weight: 4.00
+      objective: 'Use TODO comments for remaining tasks in a feature. Write comments before each function to describe its functionality'
+      success_criteria: 'Functions have descriptive comments explaining their purpose, and TODO comments mark incomplete tasks'
+      failure_criteria: 'Missing function documentation comments or incomplete features without TODO markers'
+
+    - title: 'Unnecessary Code and Imports'
+      compliance_label: true
+      weight: 4.00
+      objective: 'Remove unused code and commented code before PR. Remove any test console logs'
+      success_criteria: 'No unused imports, commented-out code, or test console logs present'
+      failure_criteria: 'Presence of unused imports, commented-out code blocks, or test console.log statements'
+
+    - title: 'Proper Response Code with Error Message'
+      compliance_label: true
+      weight: 4.00
+      objective: 'Proper responses and error handling in API calls. Exception handling and cleanup (dispose) resources. Complete error messages for user feedback'
+      success_criteria: 'All API calls have proper error handling with complete error messages, proper exception handling, and resource cleanup'
+      failure_criteria: 'Missing or inappropriate error handling, incomplete error messages, unhandled exceptions, or missing resource cleanup'
+
+    - title: 'Styling Standards'
+      compliance_label: true
+      weight: 5.00
+      objective: 'Class names should be in snake_case (e.g., section-wrapper). Two classes cannot share the same style. Use CSS variables for standard colors and font styles. Inline styling is prohibited except for dynamic styling'
+      success_criteria: 'All class names use snake_case, no duplicate styles between classes, CSS variables used for standard values, and inline styles only for dynamic styling'
+      failure_criteria: 'Class names not in snake_case, duplicate styles between classes, hardcoded colors/fonts instead of CSS variables, or inappropriate use of inline styles'
+
+    - title: 'Reusability'
+      compliance_label: true
+      weight: 5.00
+      objective: 'If same code in a component repeats more than once, make it a separate component. Use utility functions for similar tasks. Use HOC (Higher Order Components) for reusability of tasks'
+      success_criteria: 'Repeated code is extracted into separate components, utility functions are used for similar tasks, and HOCs are utilized where appropriate'
+      failure_criteria: 'Code duplication in components that should be extracted, missing utility functions for repeated logic, or missing HOC usage where appropriate'
+
+    - title: 'Naming Convention - React Components'
+      compliance_label: true
+      weight: 5.00
+      objective: 'Use PascalCase for React components and their filenames. Use camelCase for component instances'
+      success_criteria: 'All React components and their filenames use PascalCase, and component instances use camelCase'
+      failure_criteria: 'React components or filenames not using PascalCase, or component instances not using camelCase'
+
+    - title: 'Routing Standards'
+      compliance_label: true
+      weight: 5.00
+      objective: 'Handle 404 Error properly. Authenticated routes cannot be accessible without authentication. Use HOC to protect secret routes. Use standard naming convention for routing'
+      success_criteria: '404 errors are handled properly, authenticated routes are protected, HOC is used for route protection, and routing follows standard naming conventions'
+      failure_criteria: 'Missing 404 error handling, unprotected authenticated routes, missing HOC for route protection, or non-standard routing naming'
+
+    - title: 'State Management'
+      compliance_label: true
+      weight: 5.00
+      objective: 'Integrate redux-toolkit for state management tool'
+      success_criteria: 'Redux-toolkit is properly integrated and used for state management'
+      failure_criteria: 'Redux-toolkit not integrated or not used for state management where required'
