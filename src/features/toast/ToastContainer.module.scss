@@ -1,0 +1,29 @@
+@use '../../styles/placeholders' as *;
+
+.container {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  z-index: 100;
+}
+
+.toast {
+  @extend %panel;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  max-width: 320px;
+}
+
+.success {
+  border-color: var(--success);
+  color: var(--success);
+}
+
+.error {
+  border-color: var(--danger);
+  color: var(--danger);
+}

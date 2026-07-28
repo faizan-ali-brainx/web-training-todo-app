@@ -1,0 +1,7 @@
+/* Tailwind's own docs always show this import in a plain .css file, not a
+   Sass partial — Sass tries to compile @import as a Sass import (deprecated
+   syntax) and the resulting nested @theme/@tailwind at-rules confuse Vite's
+   CSS minifier when they've been round-tripped through Sass first. Kept
+   separate from global.scss (which owns tokens + shared patterns) for a
+   clean, warning-free build. Both are imported together, once, in main.tsx. */
+@import 'tailwindcss';

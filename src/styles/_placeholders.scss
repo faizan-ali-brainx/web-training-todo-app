@@ -1,0 +1,47 @@
+// Shared style blocks extended via `@extend` from page/component modules.
+// A placeholder (not a mixin) because every extender wants the exact same
+// declarations verbatim — no parameters needed. Using `@extend` here means
+// the shared block only has to change in one place; each *.module.scss
+// using it still compiles to its own scoped module (CSS Modules compile
+// each file independently), so this dedupes the source, not the final CSS
+// output — that's an accepted, standard trade-off of placeholders + CSS
+// Modules, not a bug.
+
+// The base "elevated surface" look shared by every full-page card
+// (auth pages, the todos page, the 404 page).
+%card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+// All 5 auth pages (Login/Signup/ForgotPassword/ResetPassword/VerifyEmail)
+// plus AuthCheckEmailNotice share identical sizing and identical h1/form
+// treatment on top of %card — extending this one placeholder is what lets
+// each page's own module be a single line.
+%auth_card {
+  @extend %card;
+  max-width: 400px;
+  margin: 4rem auto;
+  padding: 2rem;
+  text-align: left;
+
+  h1 {
+    font-size: 1.5rem;
+    margin: 0 0 1.25rem;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+// A lighter, recessed block for content nested inside a %card (e.g. an
+// inline notice or a future collaborators-style side panel).
+%panel {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
