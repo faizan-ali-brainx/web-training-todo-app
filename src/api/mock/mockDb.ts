@@ -8,14 +8,24 @@ interface StoredUser {
   emailVerified: boolean;
 }
 
+interface MockCollaborator {
+  id: number;
+  todoId: number;
+  userId: number;
+  invitedBy: number;
+  createdAt: string;
+}
+
 interface MockDbShape {
   users: StoredUser[];
   todos: Todo[];
+  collaborators: MockCollaborator[];
   sessions: Record<string, number>; // accessToken -> userId
   verificationTokens: Record<string, number>; // token -> userId
   resetTokens: Record<string, number>; // token -> userId
   nextUserId: number;
   nextTodoId: number;
+  nextCollaboratorId: number;
 }
 
 const STORAGE_KEY = 'react-sample-app:mockdb';
@@ -24,11 +34,13 @@ function seed(): MockDbShape {
   return {
     users: [],
     todos: [],
+    collaborators: [],
     sessions: {},
     verificationTokens: {},
     resetTokens: {},
     nextUserId: 1,
     nextTodoId: 1,
+    nextCollaboratorId: 1,
   };
 }
 
@@ -36,7 +48,9 @@ function load(): MockDbShape {
   const raw = localStorage.getItem(STORAGE_KEY);
   if (!raw) return seed();
   try {
-    return JSON.parse(raw) as MockDbShape;
+    // Merged over seed() so state saved before a schema addition (e.g.
+    // `collaborators`) still loads with sensible defaults instead of crashing.
+    return { ...seed(), ...(JSON.parse(raw) as Partial<MockDbShape>) };
   } catch {
     return seed();
   }
@@ -60,7 +74,7 @@ export const db = {
   },
 };
 
-export type { StoredUser, MockDbShape };
+export type { StoredUser, MockCollaborator, MockDbShape };
 
 // Simulates real network latency so loading states are actually visible.
 export function delay(ms = 500): Promise<void> {
