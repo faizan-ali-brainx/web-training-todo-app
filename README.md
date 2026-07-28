@@ -6,6 +6,11 @@ See [docs/FRONTEND_PRACTICE_PLAN.md](docs/FRONTEND_PRACTICE_PLAN.md) for the ful
 
 Before writing code or opening a PR, check [docs/PR_STANDARDS.md](docs/PR_STANDARDS.md) — a condensed, one-file reference for this repo's code standards and PR review checklist.
 
+**⚠️ Pending:** the backend's first PR review changed its response shape and API prefix — this
+frontend has **not** been updated to match yet, so it is currently broken against the real
+backend. See [docs/API_CONTRACT_SYNC_PLAN.md](docs/API_CONTRACT_SYNC_PLAN.md) for the exact,
+self-contained plan to fix it.
+
 ## Tech Stack
 
 - React 19 + TypeScript + Vite
