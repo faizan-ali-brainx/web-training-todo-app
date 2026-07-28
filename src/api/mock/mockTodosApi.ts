@@ -1,6 +1,7 @@
 import type { Todo } from '../../types';
+import { assertCanAccess, assertIsOwner, findTodoOrThrow } from './mockAccessHelpers';
 import { getUserIdFromToken } from './mockAuthApi';
-import { db, delay, MockApiError } from './mockDb';
+import { db, delay } from './mockDb';
 
 export interface CreateTodoDto {
   title: string;
@@ -11,24 +12,18 @@ export interface UpdateTodoDto {
   completed?: boolean;
 }
 
-// Looks up a todo and enforces that the requesting user owns it — 404 if it
-// doesn't exist, 403 if it belongs to someone else. Only authenticated users
-// managing their own todos should ever reach the write operations below.
-function findOwnedTodo(userId: number, id: number): Todo {
-  const state = db.read();
-  const todo = state.todos.find((t) => t.id === id);
-  if (!todo) throw new MockApiError(404, `Todo ${id} not found`);
-  if (todo.userId !== userId) throw new MockApiError(403, 'You do not own this todo');
-  return todo;
-}
-
-// Mock implementation of the todos CRUD endpoints, scoped per-user via the access token.
+// Mock implementation of the todos CRUD endpoints. Ownership is strict for
+// title edits/delete; completed-toggling and reads are also open to
+// collaborators, mirroring the real backend's Part 2 access rules.
 export const mockTodosApi = {
   async getAll(token: string): Promise<Todo[]> {
     await delay();
     const userId = getUserIdFromToken(token);
     const state = db.read();
-    return state.todos.filter((t) => t.userId === userId);
+    const collaboratingOn = new Set(
+      state.collaborators.filter((c) => c.userId === userId).map((c) => c.todoId)
+    );
+    return state.todos.filter((t) => t.userId === userId || collaboratingOn.has(t.id));
   },
 
   async create(token: string, dto: CreateTodoDto): Promise<Todo> {
@@ -53,7 +48,12 @@ export const mockTodosApi = {
   async update(token: string, id: number, dto: UpdateTodoDto): Promise<Todo> {
     await delay(300);
     const userId = getUserIdFromToken(token);
-    findOwnedTodo(userId, id); // throws if missing/not owned
+    const todo = findTodoOrThrow(id);
+    if (dto.title !== undefined) {
+      assertIsOwner(todo, userId);
+    } else {
+      assertCanAccess(todo, userId);
+    }
 
     let updated!: Todo;
     db.write((s) => {
@@ -70,7 +70,8 @@ export const mockTodosApi = {
   async remove(token: string, id: number): Promise<void> {
     await delay(300);
     const userId = getUserIdFromToken(token);
-    findOwnedTodo(userId, id);
+    const todo = findTodoOrThrow(id);
+    assertIsOwner(todo, userId);
 
     db.write((s) => {
       s.todos = s.todos.filter((t) => t.id !== id);

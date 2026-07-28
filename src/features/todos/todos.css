@@ -50,11 +50,14 @@
 }
 
 .todo_item {
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.todo_item_row {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.6rem 0;
-  border-bottom: 1px solid var(--border);
 }
 
 .todo_item.completed .todo_title {
@@ -67,7 +70,61 @@
   cursor: text;
 }
 
+.todo_shared_badge {
+  margin-left: 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--text);
+  background: var(--border);
+  border-radius: 999px;
+  padding: 0.1rem 0.5rem;
+}
+
 .todo_item_actions {
   display: flex;
   gap: 0.4rem;
+}
+
+.collaborators_panel {
+  margin: 0.75rem 0 0.25rem 2rem;
+  padding: 0.75rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.collaborators_list {
+  list-style: none;
+  margin: 0 0 0.6rem;
+  padding: 0;
+}
+
+.collaborator_row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.3rem 0;
+  font-size: 0.9rem;
+}
+
+.collaborator_email {
+  color: var(--text);
+  font-size: 0.8rem;
+}
+
+.collaborators_empty {
+  font-size: 0.85rem;
+  color: var(--text);
+  margin: 0 0 0.6rem;
+}
+
+.collaborators_invite_form {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.collaborators_invite_form input {
+  flex: 1;
 }

@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from '../features/auth/authSlice';
+import collaboratorsReducer from '../features/todos/collaboratorsSlice';
 import todosReducer from '../features/todos/todosSlice';
 
 // The single Redux store for the app — every feature slice is registered here.
@@ -7,6 +8,7 @@ export const store = configureStore({
   reducer: {
     auth: authReducer,
     todos: todosReducer,
+    collaborators: collaboratorsReducer,
   },
 });
 

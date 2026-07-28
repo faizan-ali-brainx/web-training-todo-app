@@ -17,3 +17,15 @@ export interface AuthSession {
   user: User;
   accessToken: string;
 }
+
+// A todo's collaborator is just a User (the backend's PublicUser shape) —
+// aliased for readability at call sites.
+export type Collaborator = User;
+
+export interface CollaboratorInvite {
+  id: number;
+  todoId: number;
+  invitedBy: number;
+  createdAt: string;
+  user: Collaborator;
+}
