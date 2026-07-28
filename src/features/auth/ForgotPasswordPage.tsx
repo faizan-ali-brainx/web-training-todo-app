@@ -33,12 +33,14 @@ function ForgotPasswordFormFields({ register, errors, isSubmitting, onSubmit }: 
 
 function useForgotPasswordSubmit() {
   const dispatch = useAppDispatch();
-  const [resetToken, setResetToken] = useState<string | null>(null);
+  const [requestSent, setRequestSent] = useState(false);
+  const [resetToken, setResetToken] = useState<string | undefined>(undefined);
   const submitForgotPassword = async (data: ForgotPasswordFormValues) => {
     const result = await dispatch(forgotPassword(data.email)).unwrap();
     setResetToken(result.resetToken);
+    setRequestSent(true);
   };
-  return { resetToken, submitForgotPassword };
+  return { requestSent, resetToken, submitForgotPassword };
 }
 
 function ForgotPasswordLinks() {
@@ -50,11 +52,11 @@ function ForgotPasswordLinks() {
 }
 
 export function ForgotPasswordPage() {
-  const { resetToken, submitForgotPassword } = useForgotPasswordSubmit();
+  const { requestSent, resetToken, submitForgotPassword } = useForgotPasswordSubmit();
   const { register, onSubmit, formError, formState } = useAuthForm(zodResolver(forgotPasswordSchema), submitForgotPassword);
 
-  if (resetToken) {
-    const linkTo = `${ROUTES.RESET_PASSWORD}?token=${resetToken}`;
+  if (requestSent) {
+    const linkTo = resetToken ? `/reset-password?token=${resetToken}` : undefined;
     return <AuthCheckEmailNotice successMessage="A password reset link would be sent to your email." linkTo={linkTo} linkLabel="Reset my password" />;
   }
 
