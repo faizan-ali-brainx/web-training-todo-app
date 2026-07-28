@@ -32,6 +32,19 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
+// Unwraps the backend's { success, data, message } envelope back into a plain
+// resource, restoring the exact shape every real-branch call in authApi.ts/
+// todosApi.ts already expects. Runs before the existing error handling below.
+apiClient.interceptors.response.use((res) => {
+  const body: unknown = res.data;
+  if (body && typeof body === 'object' && 'success' in body && 'data' in body) {
+    const { data, message } = body as unknown as { data: unknown; message: string };
+    res.data =
+      data === null || Array.isArray(data) || typeof data !== 'object' ? data : { ...data, message };
+  }
+  return res;
+});
+
 apiClient.interceptors.response.use(
   (res) => res,
   (error: AxiosError) => {

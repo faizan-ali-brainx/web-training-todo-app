@@ -1,8 +1,8 @@
 # Frontend Update Plan — Sync to Backend's Post-Review API Contract
 
-**Status: not started.** This is a planning document only — no code has changed yet. It exists so
-the required frontend work isn't lost/forgotten, and so it can be picked up later (by a human or
-an AI coding agent) without needing this conversation's history.
+**Status: done.** All changes below have been implemented and verified end-to-end against the real
+backend (signup, verify-email, login, session rehydration, todo CRUD, logout, forgot/reset
+password — see §5). Kept for reference on why the change was needed and how it was made.
 
 **How to use this document:** This is meant to be **self-sufficient** — everything needed to make
 these changes correctly, without access to any prior chat history. It explains why the change is

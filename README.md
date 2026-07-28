@@ -44,7 +44,8 @@ flag — see `.env.example`:
   (Part 1 complete: full CRUD, ownership-enforced. Part 2 complete: invite/list/remove
   collaborators by email, permission-aware editing).
 
-Both require the backend running locally at `VITE_API_BASE_URL` (see `backend/README.md`).
+Both require the backend running locally at `VITE_API_BASE_URL` (now `http://localhost:3000/api/v1`
+— see `backend/README.md`).
 
 Notes:
 - Set either flag to `true` to fall back to that feature's mock implementation (no backend needed)

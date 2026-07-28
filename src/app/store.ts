@@ -10,6 +10,7 @@ export const store = configureStore({
     auth: authReducer,
     todos: todosReducer,
     collaborators: collaboratorsReducer,
+    toast: toastReducer,
   },
 });
 

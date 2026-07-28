@@ -3,6 +3,7 @@ import { Button } from '../../components/Button';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import type { AppDispatch } from '../../app/store';
 import { selectCurrentUser } from '../auth/authSlice';
+import { runWithToast } from '../toast/runWithToast';
 import { deleteTodo, updateTodo } from './todosSlice';
 import { TodoCollaborators } from './TodoCollaborators';
 import type { Todo } from '../../types';
@@ -13,9 +14,23 @@ import styles from './TodoItem.module.scss';
 // so they get one. Every path still toasts on failure — see runWithToast.
 function commitTitleEdit(dispatch: AppDispatch, todo: Todo, title: string) {
   const trimmed = title.trim();
-  if (trimmed && trimmed !== todo.title) {
-    dispatch(updateTodo({ id: todo.id, dto: { title: trimmed } }));
-  }
+  if (!trimmed || trimmed === todo.title) return;
+  void runWithToast(
+    dispatch,
+    () => dispatch(updateTodo({ id: todo.id, dto: { title: trimmed } })).unwrap(),
+    'Todo renamed'
+  );
+}
+
+// Toggle/delete dispatches wrapped with toast feedback, split out of
+// TodoItemImpl so it stays small.
+function useTodoMutations(dispatch: AppDispatch, todo: Todo) {
+  const toggleComplete = () =>
+    runWithToast(dispatch, () =>
+      dispatch(updateTodo({ id: todo.id, dto: { completed: !todo.completed } })).unwrap()
+    );
+  const remove = () => runWithToast(dispatch, () => dispatch(deleteTodo(todo.id)).unwrap(), 'Todo deleted');
+  return { toggleComplete, remove };
 }
 
 // Inline-edit state for a todo's title, split out of TodoItemImpl so both
@@ -68,9 +83,9 @@ interface TodoTitleDisplayProps {
 
 function TodoTitleDisplay({ todo, isOwner, onStartEdit }: TodoTitleDisplayProps) {
   return (
-    <span className="todo_title" onDoubleClick={isOwner ? onStartEdit : undefined}>
+    <span className={styles.title} onDoubleClick={isOwner ? onStartEdit : undefined}>
       {todo.title}
-      {!isOwner && <span className="todo_shared_badge">Shared with you</span>}
+      {!isOwner && <span className={styles.sharedBadge}>Shared with you</span>}
     </span>
   );
 }
@@ -123,7 +138,7 @@ interface TodoItemActionsProps {
 function TodoItemActions(props: TodoItemActionsProps) {
   const { isOwner, isEditing, showCollaborators, onToggleEdit, onToggleCollaborators, onDelete } = props;
   return (
-    <div className="todo_item_actions">
+    <div className={styles.actions}>
       <Button variant="secondary" type="button" onClick={onToggleCollaborators}>
         {showCollaborators ? 'Hide sharing' : 'Share'}
       </Button>
@@ -146,7 +161,7 @@ interface TodoItemRowProps {
 function TodoItemRow(props: TodoItemRowProps) {
   const { todo, isOwner, editing, showCollaborators, onToggleCollaborators, onToggleComplete, onDelete } = props;
   return (
-    <div className="todo_item_row">
+    <div className={styles.row}>
       <input type="checkbox" checked={todo.completed} onChange={onToggleComplete} />
       <TodoTitleField todo={todo} isOwner={isOwner} editing={editing} />
       <TodoItemActions
@@ -167,7 +182,7 @@ type TodoItemViewProps = TodoItemRowProps;
 function TodoItemView(props: TodoItemViewProps) {
   const { todo, isOwner, showCollaborators } = props;
   return (
-    <li className={`todo_item${todo.completed ? ' completed' : ''}`}>
+    <li className={`${styles.item}${todo.completed ? ` ${styles.completed}` : ''}`}>
       <TodoItemRow {...props} />
       {showCollaborators && <TodoCollaborators todoId={todo.id} isOwner={isOwner} />}
     </li>
@@ -183,6 +198,7 @@ function TodoItemImpl({ todo }: TodoItemProps) {
   const currentUser = useAppSelector(selectCurrentUser);
   const isOwner = todo.userId === currentUser?.id;
   const editing = useTitleEditing(dispatch, todo);
+  const { toggleComplete, remove } = useTodoMutations(dispatch, todo);
   const [showCollaborators, setShowCollaborators] = useState(false);
 
   return (
@@ -192,8 +208,8 @@ function TodoItemImpl({ todo }: TodoItemProps) {
       editing={editing}
       showCollaborators={showCollaborators}
       onToggleCollaborators={() => setShowCollaborators((v) => !v)}
-      onToggleComplete={() => dispatch(updateTodo({ id: todo.id, dto: { completed: !todo.completed } }))}
-      onDelete={() => dispatch(deleteTodo(todo.id))}
+      onToggleComplete={toggleComplete}
+      onDelete={remove}
     />
   );
 }

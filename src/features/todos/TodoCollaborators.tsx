@@ -10,6 +10,7 @@ import {
   selectCollaboratorsForTodo,
 } from './collaboratorsSlice';
 import type { Collaborator } from '../../types';
+import styles from './TodoCollaborators.module.scss';
 
 // Owner-only invite form's state/submit logic, split out so InviteForm below
 // stays pure JSX.
@@ -46,7 +47,7 @@ function InviteForm({ todoId }: InviteFormProps) {
   const { email, setEmail, error, isSubmitting, onSubmit } = useInviteForm(todoId);
 
   return (
-    <form onSubmit={onSubmit} className="collaborators_invite_form">
+    <form onSubmit={onSubmit} className={styles.inviteForm}>
       <input
         type="email"
         className="ui_input"
@@ -74,9 +75,9 @@ function CollaboratorRow({ collaborator, todoId, isOwner }: CollaboratorRowProps
   const dispatch = useAppDispatch();
 
   return (
-    <li className="collaborator_row">
+    <li className={styles.row}>
       <span>
-        {collaborator.name} <span className="collaborator_email">({collaborator.email})</span>
+        {collaborator.name} <span className={styles.email}>({collaborator.email})</span>
       </span>
       {isOwner && (
         <Button
@@ -102,7 +103,7 @@ interface CollaboratorsStatusProps {
 function CollaboratorsStatus({ status, error, isEmpty }: CollaboratorsStatusProps) {
   if (status === 'loading') return <Spinner />;
   if (status === 'failed') return <FormError message={error} />;
-  if (status === 'succeeded' && isEmpty) return <p className="collaborators_empty">No collaborators yet.</p>;
+  if (status === 'succeeded' && isEmpty) return <p className={styles.empty}>No collaborators yet.</p>;
   return null;
 }
 
@@ -115,7 +116,7 @@ interface CollaboratorsListProps {
 function CollaboratorsList({ items, todoId, isOwner }: CollaboratorsListProps) {
   if (items.length === 0) return null;
   return (
-    <ul className="collaborators_list">
+    <ul className={styles.list}>
       {items.map((c) => (
         <CollaboratorRow key={c.id} collaborator={c} todoId={todoId} isOwner={isOwner} />
       ))}
@@ -139,7 +140,7 @@ export function TodoCollaborators({ todoId, isOwner }: TodoCollaboratorsProps) {
   }, [dispatch, todoId]);
 
   return (
-    <div className="collaborators_panel">
+    <div className={styles.panel}>
       <CollaboratorsStatus status={status} error={error} isEmpty={items.length === 0} />
       <CollaboratorsList items={items} todoId={todoId} isOwner={isOwner} />
       {isOwner && <InviteForm todoId={todoId} />}
