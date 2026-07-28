@@ -2,11 +2,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { FieldErrors, UseFormRegister } from 'react-hook-form';
-import './auth.css';
+import styles from './ForgotPasswordPage.module.scss';
 import { Button } from '../../components/Button';
 import { FormError } from '../../components/FormError';
 import { TextField } from '../../components/TextField';
 import { useAppDispatch } from '../../app/hooks';
+import { ROUTES } from '../../routes/routes.constants';
 import { AuthCheckEmailNotice } from './AuthCheckEmailNotice';
 import { forgotPassword } from './authSlice';
 import { forgotPasswordSchema, type ForgotPasswordFormValues } from './schemas';
@@ -43,7 +44,7 @@ function useForgotPasswordSubmit() {
 function ForgotPasswordLinks() {
   return (
     <div className="auth_links">
-      <Link to="/login">Back to login</Link>
+      <Link to={ROUTES.LOGIN}>Back to login</Link>
     </div>
   );
 }
@@ -53,12 +54,12 @@ export function ForgotPasswordPage() {
   const { register, onSubmit, formError, formState } = useAuthForm(zodResolver(forgotPasswordSchema), submitForgotPassword);
 
   if (resetToken) {
-    const linkTo = `/reset-password?token=${resetToken}`;
+    const linkTo = `${ROUTES.RESET_PASSWORD}?token=${resetToken}`;
     return <AuthCheckEmailNotice successMessage="A password reset link would be sent to your email." linkTo={linkTo} linkLabel="Reset my password" />;
   }
 
   return (
-    <section className="auth_page">
+    <section className={styles.page}>
       <h1>Forgot password</h1>
       <FormError message={formError} />
       <ForgotPasswordFormFields

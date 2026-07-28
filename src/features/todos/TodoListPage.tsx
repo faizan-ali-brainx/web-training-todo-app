@@ -1,21 +1,24 @@
 import { useEffect } from 'react';
-import './todos.css';
 import { Button } from '../../components/Button';
 import { Spinner } from '../../components/Spinner';
 import { FormError } from '../../components/FormError';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { logout, selectCurrentUser } from '../auth/authSlice';
+import { runWithToast } from '../toast/runWithToast';
 import { fetchTodos, selectTodos, selectTodosError, selectTodosStatus } from './todosSlice';
 import { TodoForm } from './TodoForm';
 import { TodoItem } from './TodoItem';
 import type { Todo } from '../../types';
+import styles from './TodoListPage.module.scss';
 
 function TodoListHeader({ userName, onLogout }: { userName: string | undefined; onLogout: () => void }) {
   return (
-    <header className="todos_header">
+    <header className={styles.header}>
       <h1>Todo List</h1>
-      <div>
-        <span className="todos_user">{userName}</span>
+      {/* Simple structural flex row — a good fit for a Tailwind utility class
+          rather than its own named selector in TodoListPage.module.scss. */}
+      <div className="flex items-center gap-3">
+        <span className={styles.user}>{userName}</span>
         <Button variant="secondary" onClick={onLogout}>
           Logout
         </Button>
@@ -36,7 +39,7 @@ function TodoListBody({ status, error, todos }: TodoListBodyProps) {
   if (todos.length === 0) return <p>No todos yet — add one above.</p>;
 
   return (
-    <ul className="todo_list">
+    <ul className={styles.list}>
       {todos.map((todo) => (
         <TodoItem key={todo.id} todo={todo} />
       ))}
@@ -54,10 +57,11 @@ export function TodoListPage() {
   useEffect(() => {
     dispatch(fetchTodos());
   }, [dispatch]);
+  const handleLogout = () => runWithToast(dispatch, () => dispatch(logout()).unwrap(), 'Logged out');
 
   return (
-    <section className="todos_page">
-      <TodoListHeader userName={user?.name} onLogout={() => dispatch(logout())} />
+    <section className={styles.page}>
+      <TodoListHeader userName={user?.name} onLogout={handleLogout} />
       <TodoForm />
       <TodoListBody status={status} error={error} todos={todos} />
     </section>

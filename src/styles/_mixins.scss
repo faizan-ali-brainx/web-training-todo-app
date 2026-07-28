@@ -1,0 +1,9 @@
+// Shared, parameterizable style behaviors — @include this from any
+// *.module.scss. (The shared "card" look is a %placeholder in
+// _placeholders.scss instead of a mixin here, since it's extended as-is with
+// no parameters — see that file for why.)
+
+@mixin focus-ring {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import styles from './AuthCheckEmailNotice.module.scss';
 
 interface AuthCheckEmailNoticeProps {
   successMessage: string;
@@ -10,7 +11,7 @@ interface AuthCheckEmailNoticeProps {
 // simulate an email link on-screen since there's no real mail server yet.
 export function AuthCheckEmailNotice({ successMessage, linkTo, linkLabel }: AuthCheckEmailNoticeProps) {
   return (
-    <section className="auth_page">
+    <section className={styles.page}>
       <h1>Check your email</h1>
       <p className="auth_success">{successMessage}</p>
       <p className="auth_mock_note">

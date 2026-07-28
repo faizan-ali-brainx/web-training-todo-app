@@ -1,11 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useNavigate } from 'react-router-dom';
 import type { FieldErrors, UseFormRegister } from 'react-hook-form';
-import './auth.css';
+import styles from './LoginPage.module.scss';
 import { Button } from '../../components/Button';
 import { FormError } from '../../components/FormError';
 import { TextField } from '../../components/TextField';
 import { useAppDispatch } from '../../app/hooks';
+import { ROUTES } from '../../routes/routes.constants';
+import { showToast } from '../toast/toastSlice';
 import { login } from './authSlice';
 import { loginSchema, type LoginFormValues } from './schemas';
 import { useAuthForm } from './useAuthForm';
@@ -32,8 +34,8 @@ function LoginFormFields({ register, errors, isSubmitting, onSubmit }: LoginForm
 function LoginLinks() {
   return (
     <div className="auth_links">
-      <Link to="/forgot-password">Forgot your password?</Link>
-      <span>Don't have an account? <Link to="/signup">Sign up</Link></span>
+      <Link to={ROUTES.FORGOT_PASSWORD}>Forgot your password?</Link>
+      <span>Don't have an account? <Link to={ROUTES.SIGNUP}>Sign up</Link></span>
     </div>
   );
 }
@@ -43,12 +45,13 @@ export function LoginPage() {
   const navigate = useNavigate();
   const submitLogin = async (data: LoginFormValues) => {
     await dispatch(login(data)).unwrap();
-    navigate('/todos');
+    dispatch(showToast({ message: 'Welcome back!', variant: 'success' }));
+    navigate(ROUTES.TODOS);
   };
   const { register, onSubmit, formError, formState } = useAuthForm(zodResolver(loginSchema), submitLogin);
 
   return (
-    <section className="auth_page">
+    <section className={styles.page}>
       <h1>Login</h1>
       <FormError message={formError} />
       <LoginFormFields

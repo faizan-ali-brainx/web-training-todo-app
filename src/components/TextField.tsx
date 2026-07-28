@@ -1,5 +1,4 @@
 import { forwardRef, type InputHTMLAttributes } from 'react';
-import './components.css';
 
 interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
@@ -7,7 +6,9 @@ interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 // forwardRef is required so react-hook-form's register() can attach its ref
-// directly to the underlying <input>.
+// directly to the underlying <input>. Composes only the shared `ui_field`/
+// `ui_input`/`ui_field_error` global classes (see styles/global.scss) — no
+// component-specific styling of its own, so no TextField.module.scss.
 export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
   ({ label, error, id, ...rest }, ref) => {
     const inputId = id ?? rest.name;

@@ -2,11 +2,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { FieldErrors, UseFormRegister } from 'react-hook-form';
-import './auth.css';
+import styles from './SignupPage.module.scss';
 import { Button } from '../../components/Button';
 import { FormError } from '../../components/FormError';
 import { TextField } from '../../components/TextField';
 import { useAppDispatch } from '../../app/hooks';
+import { ROUTES } from '../../routes/routes.constants';
 import { AuthCheckEmailNotice } from './AuthCheckEmailNotice';
 import { signup } from './authSlice';
 import { signupSchema, type SignupFormValues } from './schemas';
@@ -51,7 +52,7 @@ function useSignupSubmit() {
 function SignupLinks() {
   return (
     <div className="auth_links">
-      <span>Already have an account? <Link to="/login">Login</Link></span>
+      <span>Already have an account? <Link to={ROUTES.LOGIN}>Login</Link></span>
     </div>
   );
 }
@@ -61,12 +62,12 @@ export function SignupPage() {
   const { register, onSubmit, formError, formState } = useAuthForm(zodResolver(signupSchema), submitSignup);
 
   if (verificationToken) {
-    const linkTo = `/verify-email?token=${verificationToken}`;
+    const linkTo = `${ROUTES.VERIFY_EMAIL}?token=${verificationToken}`;
     return <AuthCheckEmailNotice successMessage="Account created! Verify your email to log in." linkTo={linkTo} linkLabel="Verify my email" />;
   }
 
   return (
-    <section className="auth_page">
+    <section className={styles.page}>
       <h1>Sign up</h1>
       <FormError message={formError} />
       <SignupFormFields

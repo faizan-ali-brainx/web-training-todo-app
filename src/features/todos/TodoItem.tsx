@@ -2,14 +2,22 @@ import { memo, useState } from 'react';
 import { Button } from '../../components/Button';
 import { useAppDispatch } from '../../app/hooks';
 import type { AppDispatch } from '../../app/store';
+import { runWithToast } from '../toast/runWithToast';
 import { deleteTodo, updateTodo } from './todosSlice';
 import type { Todo } from '../../types';
+import styles from './TodoItem.module.scss';
 
+// Toggling `completed` skips the success toast (too frequent/obvious from
+// the UI itself); renaming and deleting are deliberate, occasional actions
+// so they get one. Every path still toasts on failure — see runWithToast.
 function commitTitleEdit(dispatch: AppDispatch, todo: Todo, title: string) {
   const trimmed = title.trim();
-  if (trimmed && trimmed !== todo.title) {
-    dispatch(updateTodo({ id: todo.id, dto: { title: trimmed } }));
-  }
+  if (!trimmed || trimmed === todo.title) return;
+  void runWithToast(
+    dispatch,
+    () => dispatch(updateTodo({ id: todo.id, dto: { title: trimmed } })).unwrap(),
+    'Todo renamed'
+  );
 }
 
 interface TodoItemProps {
@@ -40,7 +48,7 @@ function TodoTitleField({ todo, isEditing, title, onTitleChange, onSaveEdit, onS
   }
 
   return (
-    <span className="todo_title" onDoubleClick={onStartEdit}>
+    <span className={styles.title} onDoubleClick={onStartEdit}>
       {todo.title}
     </span>
   );
@@ -54,7 +62,7 @@ interface TodoItemActionsProps {
 
 function TodoItemActions({ isEditing, onToggleEdit, onDelete }: TodoItemActionsProps) {
   return (
-    <div className="todo_item_actions">
+    <div className={styles.actions}>
       <Button variant="secondary" type="button" onClick={onToggleEdit}>
         {isEditing ? 'Cancel' : 'Edit'}
       </Button>
@@ -83,7 +91,7 @@ function TodoItemView(props: TodoItemViewProps) {
     props;
 
   return (
-    <li className={`todo_item${todo.completed ? ' completed' : ''}`}>
+    <li className={`${styles.item}${todo.completed ? ` ${styles.completed}` : ''}`}>
       <input type="checkbox" checked={todo.completed} onChange={onToggleComplete} />
       <TodoTitleField
         todo={todo}
@@ -98,27 +106,37 @@ function TodoItemView(props: TodoItemViewProps) {
   );
 }
 
+// Toggle/delete dispatches wrapped with toast feedback, split out of
+// TodoItemImpl so it stays small.
+function useTodoMutations(dispatch: AppDispatch, todo: Todo) {
+  const toggleComplete = () =>
+    runWithToast(dispatch, () =>
+      dispatch(updateTodo({ id: todo.id, dto: { completed: !todo.completed } })).unwrap()
+    );
+  const remove = () => runWithToast(dispatch, () => dispatch(deleteTodo(todo.id)).unwrap(), 'Todo deleted');
+  return { toggleComplete, remove };
+}
+
 function TodoItemImpl({ todo }: TodoItemProps) {
   const dispatch = useAppDispatch();
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(todo.title);
-
+  const { toggleComplete, remove } = useTodoMutations(dispatch, todo);
   const handleSaveEdit = () => {
     commitTitleEdit(dispatch, todo, title);
     setIsEditing(false);
   };
-
   return (
     <TodoItemView
       todo={todo}
       isEditing={isEditing}
       title={title}
-      onToggleComplete={() => dispatch(updateTodo({ id: todo.id, dto: { completed: !todo.completed } }))}
+      onToggleComplete={toggleComplete}
       onTitleChange={setTitle}
       onSaveEdit={handleSaveEdit}
       onStartEdit={() => setIsEditing(true)}
       onToggleEdit={() => setIsEditing((v) => !v)}
-      onDelete={() => dispatch(deleteTodo(todo.id))}
+      onDelete={remove}
     />
   );
 }

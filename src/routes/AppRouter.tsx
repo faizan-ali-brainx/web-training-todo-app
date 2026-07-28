@@ -8,27 +8,28 @@ import { TodoListPage } from '../features/todos/TodoListPage';
 import { NotFoundPage } from './NotFoundPage';
 import { ProtectedRoute } from './ProtectedRoute';
 import { PublicOnlyRoute } from './PublicOnlyRoute';
+import { ROUTES } from './routes.constants';
 
 export function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
         <Route element={<PublicOnlyRoute />}>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+          <Route path={ROUTES.SIGNUP} element={<SignupPage />} />
+          <Route path={ROUTES.FORGOT_PASSWORD} element={<ForgotPasswordPage />} />
         </Route>
 
         {/* Reachable regardless of auth state — a signed-in user should still
             be able to open a verification/reset link. */}
-        <Route path="/verify-email" element={<VerifyEmailPage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path={ROUTES.VERIFY_EMAIL} element={<VerifyEmailPage />} />
+        <Route path={ROUTES.RESET_PASSWORD} element={<ResetPasswordPage />} />
 
         <Route element={<ProtectedRoute />}>
-          <Route path="/todos" element={<TodoListPage />} />
+          <Route path={ROUTES.TODOS} element={<TodoListPage />} />
         </Route>
 
-        <Route path="/" element={<Navigate to="/todos" replace />} />
+        <Route path={ROUTES.HOME} element={<Navigate to={ROUTES.TODOS} replace />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>

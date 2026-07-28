@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import './auth.css';
+import styles from './VerifyEmailPage.module.scss';
 import { Spinner } from '../../components/Spinner';
 import { FormError } from '../../components/FormError';
 import { useAppDispatch } from '../../app/hooks';
+import { ROUTES } from '../../routes/routes.constants';
 import { verifyEmail } from './authSlice';
 
 type VerifyStatus = 'verifying' | 'success' | 'error';
@@ -18,7 +19,7 @@ function VerifyEmailResult({ status, error }: { status: VerifyStatus; error: str
       <>
         <p className="auth_success">Your email has been verified.</p>
         <div className="auth_links">
-          <Link to="/login">Continue to login</Link>
+          <Link to={ROUTES.LOGIN}>Continue to login</Link>
         </div>
       </>
     );
@@ -28,7 +29,7 @@ function VerifyEmailResult({ status, error }: { status: VerifyStatus; error: str
     <>
       <FormError message={error} />
       <div className="auth_links">
-        <Link to="/signup">Back to sign up</Link>
+        <Link to={ROUTES.SIGNUP}>Back to sign up</Link>
       </div>
     </>
   );
@@ -64,7 +65,7 @@ export function VerifyEmailPage() {
   const { status, error } = useVerifyOnMount(searchParams.get('token'));
 
   return (
-    <section className="auth_page">
+    <section className={styles.page}>
       <h1>Email Verification</h1>
       <VerifyEmailResult status={status} error={error} />
     </section>

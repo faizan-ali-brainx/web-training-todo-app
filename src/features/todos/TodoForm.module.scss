@@ -1,0 +1,10 @@
+.form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  align-items: flex-start;
+
+  input {
+    flex: 1;
+  }
+}
