@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from '../features/auth/authSlice';
+import notificationsReducer from '../features/notifications/notificationsSlice';
 import collaboratorsReducer from '../features/todos/collaboratorsSlice';
 import todosReducer from '../features/todos/todosSlice';
 import toastReducer from '../features/toast/toastSlice';
@@ -10,6 +11,7 @@ export const store = configureStore({
     auth: authReducer,
     todos: todosReducer,
     collaborators: collaboratorsReducer,
+    notifications: notificationsReducer,
     toast: toastReducer,
   },
 });

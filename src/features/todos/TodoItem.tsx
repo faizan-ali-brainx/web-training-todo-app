@@ -6,6 +6,7 @@ import { selectCurrentUser } from '../auth/authSlice';
 import { runWithToast } from '../toast/runWithToast';
 import { deleteTodo, updateTodo } from './todosSlice';
 import { TodoCollaborators } from './TodoCollaborators';
+import { TodoDeadline } from './TodoDeadline';
 import type { Todo } from '../../types';
 import styles from './TodoItem.module.scss';
 
@@ -184,6 +185,7 @@ function TodoItemView(props: TodoItemViewProps) {
   return (
     <li className={`${styles.item}${todo.completed ? ` ${styles.completed}` : ''}`}>
       <TodoItemRow {...props} />
+      <TodoDeadline todo={todo} isOwner={isOwner} />
       {showCollaborators && <TodoCollaborators todoId={todo.id} isOwner={isOwner} />}
     </li>
   );

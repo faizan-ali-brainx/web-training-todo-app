@@ -1,4 +1,4 @@
-import type { Todo } from '../../types';
+import type { AppNotification, Todo } from '../../types';
 
 interface StoredUser {
   id: number;
@@ -20,12 +20,14 @@ interface MockDbShape {
   users: StoredUser[];
   todos: Todo[];
   collaborators: MockCollaborator[];
+  notifications: AppNotification[];
   sessions: Record<string, number>; // accessToken -> userId
   verificationTokens: Record<string, number>; // token -> userId
   resetTokens: Record<string, number>; // token -> userId
   nextUserId: number;
   nextTodoId: number;
   nextCollaboratorId: number;
+  nextNotificationId: number;
 }
 
 const STORAGE_KEY = 'react-sample-app:mockdb';
@@ -35,12 +37,14 @@ function seed(): MockDbShape {
     users: [],
     todos: [],
     collaborators: [],
+    notifications: [],
     sessions: {},
     verificationTokens: {},
     resetTokens: {},
     nextUserId: 1,
     nextTodoId: 1,
     nextCollaboratorId: 1,
+    nextNotificationId: 1,
   };
 }
 

@@ -2,6 +2,7 @@ import type { Collaborator, CollaboratorInvite } from '../../types';
 import { assertCanAccess, assertIsOwner, findTodoOrThrow } from './mockAccessHelpers';
 import { getUserIdFromToken } from './mockAuthApi';
 import { db, delay, MockApiError, type StoredUser } from './mockDb';
+import { addMockNotification } from './mockNotificationsApi';
 
 function toCollaborator(user: StoredUser): Collaborator {
   return { id: user.id, name: user.name, email: user.email, emailVerified: user.emailVerified };
@@ -62,7 +63,14 @@ export const mockCollaboratorsApi = {
     const invitee = findInviteeOrThrow(email);
     assertNotAlreadyCollaborator(todoId, invitee.id);
 
-    return createCollaboratorRow(todoId, invitee, userId);
+    const created = createCollaboratorRow(todoId, invitee, userId);
+    addMockNotification({
+      userId: invitee.id,
+      todoId,
+      type: 'COLLABORATOR_INVITED',
+      message: `You were added as a collaborator on "${todo.title}"`,
+    });
+    return created;
   },
 
   async remove(token: string, todoId: number, collaboratorUserId: number): Promise<void> {

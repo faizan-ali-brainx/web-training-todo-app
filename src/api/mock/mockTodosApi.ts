@@ -10,6 +10,7 @@ export interface CreateTodoDto {
 export interface UpdateTodoDto {
   title?: string;
   completed?: boolean;
+  deadline?: string | null;
 }
 
 // Mock implementation of the todos CRUD endpoints. Ownership is strict for
@@ -37,6 +38,7 @@ export const mockTodosApi = {
         userId,
         title: dto.title,
         completed: false,
+        deadline: null,
         createdAt: new Date().toISOString(),
       };
       s.todos.push(created);
@@ -49,7 +51,9 @@ export const mockTodosApi = {
     await delay(300);
     const userId = getUserIdFromToken(token);
     const todo = findTodoOrThrow(id);
-    if (dto.title !== undefined) {
+    // Editing title/deadline is owner-only; toggling completed is open to
+    // collaborators too — mirrors the real backend's TodosService.update.
+    if (dto.title !== undefined || dto.deadline !== undefined) {
       assertIsOwner(todo, userId);
     } else {
       assertCanAccess(todo, userId);
