@@ -4,6 +4,7 @@ import { Spinner } from '../../components/Spinner';
 import { FormError } from '../../components/FormError';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { logout, selectCurrentUser } from '../auth/authSlice';
+import { NotificationBell } from '../notifications/NotificationBell';
 import { runWithToast } from '../toast/runWithToast';
 import { fetchTodos, selectTodos, selectTodosError, selectTodosStatus } from './todosSlice';
 import { TodoForm } from './TodoForm';
@@ -18,6 +19,7 @@ function TodoListHeader({ userName, onLogout }: { userName: string | undefined; 
       {/* Simple structural flex row — a good fit for a Tailwind utility class
           rather than its own named selector in TodoListPage.module.scss. */}
       <div className="flex items-center gap-3">
+        <NotificationBell />
         <span className={styles.user}>{userName}</span>
         <Button variant="secondary" onClick={onLogout}>
           Logout
